@@ -1,0 +1,37 @@
+load("@rules_proto_grpc//cpp:defs.bzl", "cpp_grpc_library", "cpp_grpc_compile")
+load("@rules_proto//proto:defs.bzl", "proto_library")
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+# load("@rules_proto_grpc//cpp:defs.bzl", "cpp_grpc_library")
+proto_library(
+    name = "hello",
+    srcs = [
+        "hello.proto"
+    ],
+    deps = [
+        "@com_google_protobuf//:any_proto"
+    ],
+)
+
+cpp_grpc_compile(
+    name = "hello_include",
+    deps = [
+        ":hello"
+    ]
+)
+
+cpp_grpc_library(
+    name = "hello_proto",
+    deps = [":hello"],
+)
+
+cc_binary(
+    name = "hello_server",
+    deps = [
+        ":hello_proto", 
+        "@com_github_grpc_grpc//:grpc++",
+        # ":hello_include"
+    ],
+    srcs = [
+        "server.cc"
+    ],
+)
